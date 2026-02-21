@@ -7,5 +7,7 @@ dialect-related performance gaps in LLM reasoning tasks. We use the EnDive bench
 ## To Run
 
 python3 -m venv .venv
+
 source .venv/bin/activate
+
 pip install -r requirements.txt
