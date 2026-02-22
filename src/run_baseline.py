@@ -2,10 +2,11 @@ import os
 import json
 import time
 import re
+import datetime
 from datasets import load_dataset
 from openai import OpenAI
 import google.generativeai as genai
-from config import TASKS, DIALECTS, MODELS, N, SEED, OUT_DIR
+from config import TASKS, DIALECTS, MODELS, N, SEED, OUT_DIR, LOG_DIR
 from dotenv import load_dotenv
 load_dotenv() # Load environment variables from .env (API keys)
 
@@ -250,3 +251,25 @@ def call_model(prompt, model):
     if model.startswith("gpt-"):
         return call_openai(prompt, model)
     return call_gemini(prompt, model)
+
+################################## Output and logging directories ##################################
+
+# Create output and logging directories if they don't exist
+def ensure_dirs():
+    os.makedirs(OUT_DIR, exist_ok=True)
+    os.makedirs(LOG_DIR, exist_ok=True)
+
+# Generate path for JSONL output file for a given task, model, dialect, and condition (SAE or dialect)
+def jsonl_path(task, model, dialect, condition):
+    safe_model = model.replace("/", "_")
+    return os.path.join(OUT_DIR, f"{task}__{safe_model}__{dialect}__{condition}.jsonl")
+
+# Generate path for JSONL log file for a given task, model, and dialect
+def log_path(task, model, dialect):
+    safe_model = model.replace("/", "_")
+    return os.path.join(LOG_DIR, f"{task}__{safe_model}__{dialect}.jsonl")
+
+# Append a row (dictionary) to a JSONL file at the given path (creating the file if it doesn't exist)
+def append_jsonl(path, row):
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
