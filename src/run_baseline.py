@@ -5,6 +5,8 @@ import re
 from datasets import load_dataset
 from config import TASKS, DIALECTS, MODELS, N, SEED, OUT_DIR
 
+################################## Loading examples from datasets ##################################
+
 # Load BoolQ examples for a given dialect, number of examples, and random seed
 def load_boolq(dialect, n, seed):
     ds = load_dataset("abhaygupta1266/boolq")
@@ -22,7 +24,6 @@ def load_boolq(dialect, n, seed):
         })
         
     return examples
-
 
 # Load MBPP examples for a given dialect, number of examples, and random seed
 def load_mbpp(dialect, n, seed):
@@ -42,7 +43,6 @@ def load_mbpp(dialect, n, seed):
         
     return examples
 
-
 # Load GSM8K examples for a given dialect, number of examples, and random seed
 def load_gsm8k(dialect, n, seed):
     ds = load_dataset("abhaygupta1266/gsm8k")
@@ -59,7 +59,6 @@ def load_gsm8k(dialect, n, seed):
         })
         
     return examples
-
 
 # Load FOLIO examples for a given dialect, number of examples, and random seed
 def load_folio(dialect, n, seed):
@@ -79,6 +78,20 @@ def load_folio(dialect, n, seed):
         
     return examples
 
+# Load examples for a given task, dialect, number of examples, and random seed
+def load_task(task, dialect, n, seed):
+    if task == "boolq":
+        return load_boolq(dialect, n, seed)
+    if task == "gsm8k":
+        return load_gsm8k(dialect, n, seed)
+    if task == "mbpp":
+        return load_mbpp(dialect, n, seed)
+    if task == "folio":
+        return load_folio(dialect, n, seed)
+    return []
+
+
+################################## Building prompts ##################################
 
 # Build prompt for a given task, example, and condition (SAE or dialect)
 def build_prompt(task, ex, condition):
@@ -119,6 +132,8 @@ def build_prompt(task, ex, condition):
         
     return ""
 
+
+################################## Parsing model output ##################################
 
 # Parse BoolQ model output into boolean value (True, False, or None if unclear)
 def parse_boolq(text):
@@ -173,6 +188,21 @@ def assess_mbpp(output, test_cases):
     
     return True
 
+# Parse model output for a given task into appropriate format for scoring
+def parse_task(task, text):
+    if task == "boolq":
+        return parse_boolq(text)
+    if task == "gsm8k":
+        return parse_gsm8k(text)
+    if task == "folio":
+        return parse_folio(text)
+    if task == "mbpp":
+        return text
+    return text
+
+
+################################## Scoring model output ##################################
+
 # Compute score for a given task by comparing model prediction to label, using appropriate parsing and assessment for each task
 def score(task, pred, label, example):
     # For BoolQ, check if parsed prediction matches boolean label (True or False)
@@ -193,27 +223,4 @@ def score(task, pred, label, example):
    
     return False
 
-# Load examples for a given task, dialect, number of examples, and random seed
-def load_task(task, dialect, n, seed):
-    if task == "boolq":
-        return load_boolq(dialect, n, seed)
-    if task == "gsm8k":
-        return load_gsm8k(dialect, n, seed)
-    if task == "mbpp":
-        return load_mbpp(dialect, n, seed)
-    if task == "folio":
-        return load_folio(dialect, n, seed)
-    return []
 
-
-# Parse model output for a given task into appropriate format for scoring
-def parse_task(task, text):
-    if task == "boolq":
-        return parse_boolq(text)
-    if task == "gsm8k":
-        return parse_gsm8k(text)
-    if task == "folio":
-        return parse_folio(text)
-    if task == "mbpp":
-        return text
-    return text
