@@ -11,7 +11,10 @@ import google.generativeai as genai
 from config import TASKS, DIALECTS, MODELS, N, SEED, OUT_DIR, LOG_DIR
 from dotenv import load_dotenv
 load_dotenv() # Load environment variables from .env (API keys)
+from huggingface_hub import login
 
+if os.environ.get("HF_TOKEN"):
+    login(token=os.environ["HF_TOKEN"])
 
 ################################## Loading examples from datasets ##################################
 
