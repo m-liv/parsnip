@@ -1,9 +1,9 @@
 # Tasks:
-# Language Understanding: MultiRC
+# Language Understanding: BoolQ
 # Algorithmic Understanding: MBPP
 # Math: GSM8K
 # Logic: FOLIO
-TASKS = ["multirc", "mbpp", "gsm8k", "folio"]
+TASKS = ["boolq", "mbpp", "gsm8k", "folio"]
 
 # Dialects:
 # AAVE: African American Vernacular English
