@@ -18,10 +18,10 @@ MODELS = ["gemini-2.5-pro", "gpt-4o", "gpt-4o-mini"]
   
 # Number of examples, for each task-dialect-model combination
 #N = 200      
-N = 3 # for testing           
+N = 50 # for testing           
       
 # Random seed
-SEED = 0
+SEED = 1
 
 # Output and log directories for baseline results
 OUT_DIR = "results/baseline"
