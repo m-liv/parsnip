@@ -3,6 +3,8 @@ import json
 import time
 import re
 from datasets import load_dataset
+from openai import OpenAI
+import google.generativeai as genai
 from config import TASKS, DIALECTS, MODELS, N, SEED, OUT_DIR
 
 ################################## Loading examples from datasets ##################################
@@ -224,3 +226,24 @@ def score(task, pred, label, example):
     return False
 
 
+################################## Calling models ##################################
+def call_openai(prompt, model):
+    client = OpenAI()
+    resp = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0,
+    )
+    return resp.choices[0].message.content.strip()
+
+def call_gemini(prompt, model):
+    import os
+    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+    m = genai.GenerativeModel(model)
+    resp = m.generate_content(prompt)
+    return resp.text.strip()
+
+def call_model(prompt, model):
+    if model.startswith("gpt-"):
+        return call_openai(prompt, model)
+    return call_gemini(prompt, model)
