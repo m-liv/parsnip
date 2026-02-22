@@ -17,7 +17,8 @@ DIALECTS = ["AAVE", "IndE"]
 MODELS = ["gemini-2.5-pro", "gpt-4o", "gpt-4o-mini"]     
   
 # Number of examples, for each task-dialect-model combination
-N = 200                 
+#N = 200      
+N = 3 # for testing           
       
 # Random seed
 SEED = 0
