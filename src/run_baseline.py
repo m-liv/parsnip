@@ -3,6 +3,8 @@ import json
 import time
 import re
 import datetime
+import io
+import contextlib
 from tqdm import tqdm
 from itertools import product
 from datasets import load_dataset
@@ -194,15 +196,21 @@ def extract_code(text):
 import traceback
 def assess_mbpp(code, test_cases):
     local_env = {}
+    # Redirect stdout and stderr to block printing from the executed code
+    buf_out = io.StringIO()
+    buf_err = io.StringIO()
+
     try:
-        exec(code, local_env, local_env)
+        with contextlib.redirect_stdout(buf_out), contextlib.redirect_stderr(buf_err):
+            exec(code, local_env, local_env)
     except Exception as e:
         # print("Code execution error:", repr(e))
         # traceback.print_exc()
         return False
 
     try:
-        exec(test_cases, local_env, local_env)
+        with contextlib.redirect_stdout(buf_out), contextlib.redirect_stderr(buf_err):
+            exec(test_cases, local_env, local_env)
     except Exception as e:
         # print("Test cases execution error:", repr(e))
         # traceback.print_exc()
