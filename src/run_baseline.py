@@ -124,10 +124,11 @@ def build_prompt(task, ex, condition):
     # For MBPP, provide the code prompt
     if task == "mbpp":
         q = ex["sae_prompt"] if condition == "SAE" else ex["dialect_prompt"]
+        test_cases = ex["test_cases"]
         return (
-            "Write a Python function that satisfies the following prompt. Provide only the final code.\n\n"
-            f"{q}\n"
-            "Answer:"
+            "Given a coding problem, produce a Python function.\n\n"
+            f"Start it with 'Answer:' on its own line.\n"
+            f"Problem: {q}\nTest Cases: {test_cases}\nAnswer:"
         )
     
     # For FOLIO, ask for T/F answer to conclusion based on premises
@@ -142,7 +143,6 @@ def build_prompt(task, ex, condition):
         )
         
     return ""
-
 
 ################################## Parsing model output ##################################
 
@@ -173,24 +173,34 @@ def parse_folio(text):
 
 # For MBPP, extract the code block from the model output (or return full output if no code block)
 def extract_code(text):
-    match = re.search(r"```(?:python)?\n(.*?)```", text, re.DOTALL)
-    if match:
-        return match.group(1).strip()
-    return text.strip()
+    m = re.search(r"```(?:python)?\s*(.*?)```", text, re.DOTALL)
+    if m:
+        code = m.group(1)
+    else:
+        code = text
+
+    code = re.sub(r"^\s*Answer\s*:\s*", "", code, flags=re.IGNORECASE)
+    code = re.sub(r"```(?:python)?", "", code)
+    code = re.sub(r"```", "", code)
+
+    return code.strip()
 
 # Assess MBPP model output by executing the extracted code and checking if it runs without error and passes all test cases
-def assess_mbpp(output, test_cases):
-    code = extract_code(output)
+import traceback
+def assess_mbpp(code, test_cases):
     local_env = {}
-    
     try:
-        exec(code, {}, local_env)
-    except:
+        exec(code, local_env, local_env)
+    except Exception as e:
+        # print("Code execution error:", repr(e))
+        # traceback.print_exc()
         return False
 
     try:
-        exec(test_cases, {}, local_env)
-    except:
+        exec(test_cases, local_env, local_env)
+    except Exception as e:
+        # print("Test cases execution error:", repr(e))
+        # traceback.print_exc()
         return False
 
     return True
@@ -219,7 +229,21 @@ def score(task, pred, label, example):
     
     # For MBPP, check if code runs without error and passes test cases
     if task == "mbpp":
-        return assess_mbpp(pred, example["test_cases"])
+        code = extract_code(pred)
+        # print("=" * 100)
+        # print("PROMPT:", example["sae_prompt"])
+        # print()
+        # print("MODEL's CODE (cleaned):", code)
+        # print()
+        # print("REFERENCE CODE:", example["reference_code"])
+        # print()
+        # print("TEST CASES:", example["test_cases"])
+        # print()
+        results = assess_mbpp(code, example["test_cases"])
+        # print("RESULTS - Passed:", results)
+        # print("=" * 100)
+        # print()
+        return results
     
     # For GSM8K, check if parsed prediction matches numeric label (extracted from text)
     if task == "gsm8k":
@@ -348,7 +372,7 @@ def main():
     
     # For debugging
     d_tasks = ["mbpp"]
-    d_dialects = ["AAVE"]
+    d_dialects = ["AAVE", "IndE"]
     d_models = ["gpt-4o-mini"]
 
     for task in d_tasks:
