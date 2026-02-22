@@ -23,4 +23,6 @@ N = 3 # for testing
 # Random seed
 SEED = 0
 
+# Output and log directories for baseline results
 OUT_DIR = "results/baseline"
+LOG_DIR = "logs/baseline"
