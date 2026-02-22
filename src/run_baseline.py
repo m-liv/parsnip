@@ -123,7 +123,12 @@ def build_prompt(task, ex, condition):
         
     # For MBPP, provide the code prompt
     if task == "mbpp":
-        return ex["sae_prompt"] if condition == "SAE" else ex["dialect_prompt"]
+        q = ex["sae_prompt"] if condition == "SAE" else ex["dialect_prompt"]
+        return (
+            "Write a Python function that satisfies the following prompt. Provide only the final code.\n\n"
+            f"{q}\n"
+            "Answer:"
+        )
     
     # For FOLIO, ask for T/F answer to conclusion based on premises
     if task == "folio":
