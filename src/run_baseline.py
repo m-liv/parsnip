@@ -3,6 +3,8 @@ import json
 import time
 import re
 import datetime
+from tqdm import tqdm
+from itertools import product
 from datasets import load_dataset
 from openai import OpenAI
 import google.generativeai as genai
@@ -321,7 +323,13 @@ def run_one(task, model, dialect):
         correct = 0
         total = 0
 
-        for i, ex in enumerate(examples):
+        for i, ex in enumerate(
+            tqdm(
+                examples,
+                desc=f"{task} | {model} | {dialect} | {condition}",
+                leave=False
+            )
+        ):
             prompt = build_prompt(task, ex, condition)
 
             start = time.time()
@@ -374,7 +382,7 @@ def main():
     d_tasks = ["mbpp"]
     d_dialects = ["AAVE", "IndE"]
     d_models = ["gpt-4o-mini"]
-
+    
     for task in d_tasks:
         for dialect in d_dialects:
             for model in d_models:
