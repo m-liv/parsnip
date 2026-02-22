@@ -182,22 +182,19 @@ def extract_code(text):
 def assess_mbpp(output, test_cases):
     code = extract_code(output)
     local_env = {}
+    
     try:
         exec(code, {}, local_env)
     except:
         return False
-    
-    tests = test_cases
-    if isinstance(tests, str):
-        tests = eval(tests)
-    
-    for t in tests:
-        try:
-            exec(t, {}, local_env)
-        except:
-            return False
-    
+
+    try:
+        exec(test_cases, {}, local_env)
+    except:
+        return False
+
     return True
+    
 
 # Parse model output for a given task into appropriate format for scoring
 def parse_task(task, text):
@@ -348,10 +345,15 @@ def run_one(task, model, dialect):
 def main():
     ensure_dirs()
     summary = []
+    
+    # For debugging
+    d_tasks = ["mbpp"]
+    d_dialects = ["AAVE"]
+    d_models = ["gpt-4o-mini"]
 
-    for task in TASKS:
-        for dialect in DIALECTS:
-            for model in MODELS:
+    for task in d_tasks:
+        for dialect in d_dialects:
+            for model in d_models:
                 res = run_one(task, model, dialect)
                 summary.append({
                     "task": task,
