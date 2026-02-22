@@ -172,3 +172,48 @@ def assess_mbpp(output, test_cases):
             return False
     
     return True
+
+# Compute score for a given task by comparing model prediction to label, using appropriate parsing and assessment for each task
+def score(task, pred, label, example):
+    # For BoolQ, check if parsed prediction matches boolean label (True or False)
+    if task == "boolq":
+        return pred == label
+    
+    # For MBPP, check if code runs without error and passes test cases
+    if task == "mbpp":
+        return assess_mbpp(pred, example["test_cases"])
+    
+    # For GSM8K, check if parsed prediction matches numeric label (extracted from text)
+    if task == "gsm8k":
+        return pred == label
+    
+    # For FOLIO, check if parsed prediction matches string label (True, False, or Uncertain)
+    if task == "folio":
+        return pred == label
+   
+    return False
+
+# Load examples for a given task, dialect, number of examples, and random seed
+def load_task(task, dialect, n, seed):
+    if task == "boolq":
+        return load_boolq(dialect, n, seed)
+    if task == "gsm8k":
+        return load_gsm8k(dialect, n, seed)
+    if task == "mbpp":
+        return load_mbpp(dialect, n, seed)
+    if task == "folio":
+        return load_folio(dialect, n, seed)
+    return []
+
+
+# Parse model output for a given task into appropriate format for scoring
+def parse_task(task, text):
+    if task == "boolq":
+        return parse_boolq(text)
+    if task == "gsm8k":
+        return parse_gsm8k(text)
+    if task == "folio":
+        return parse_folio(text)
+    if task == "mbpp":
+        return text
+    return text
