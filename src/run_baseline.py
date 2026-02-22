@@ -118,3 +118,30 @@ def build_prompt(task, ex, condition):
         )
         
     return ""
+
+
+# Parse BoolQ model output into boolean value (True, False, or None if unclear)
+def parse_boolq(text):
+    t = text.strip().lower()
+    if "true" in t and "false" not in t:
+        return True
+    if "false" in t and "true" not in t:
+        return False
+    return None
+
+# Parse GSM8K model output into numeric value (last number in output, or None if no numbers)
+def parse_gsm8k(text):
+    nums = re.findall(r"-?\d+\.?\d*", text.replace(",", ""))
+    return nums[-1] if nums else None
+
+# Parse FOLIO model output into string value (True, False, Uncertain, or None if unclear)
+def parse_folio(text):
+    t = text.strip().lower()
+    if "true" in t and "false" not in t and "uncertain" not in t:
+        return "True"
+    if "false" in t and "true" not in t and "uncertain" not in t:
+        return "False"
+    if "uncertain" in t and "true" not in t and "false" not in t:
+        return "Uncertain"
+    return None
+
