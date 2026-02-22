@@ -145,3 +145,30 @@ def parse_folio(text):
         return "Uncertain"
     return None
 
+# For MBPP, extract the code block from the model output (or return full output if no code block)
+def extract_code(text):
+    match = re.search(r"```(?:python)?\n(.*?)```", text, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    return text.strip()
+
+# Assess MBPP model output by executing the extracted code and checking if it runs without error and passes all test cases
+def assess_mbpp(output, test_cases):
+    code = extract_code(output)
+    local_env = {}
+    try:
+        exec(code, {}, local_env)
+    except:
+        return False
+    
+    tests = test_cases
+    if isinstance(tests, str):
+        tests = eval(tests)
+    
+    for t in tests:
+        try:
+            exec(t, {}, local_env)
+        except:
+            return False
+    
+    return True
