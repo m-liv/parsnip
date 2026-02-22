@@ -7,7 +7,7 @@ from tqdm import tqdm
 from itertools import product
 from datasets import load_dataset
 from openai import OpenAI
-import google.generativeai as genai
+from google import genai
 from config import TASKS, DIALECTS, MODELS, N, SEED, OUT_DIR, LOG_DIR
 from dotenv import load_dotenv
 load_dotenv() # Load environment variables from .env (API keys)
@@ -272,11 +272,12 @@ def call_openai(prompt, model):
     return resp.choices[0].message.content.strip()
 
 def call_gemini(prompt, model):
-    import os
-    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    m = genai.GenerativeModel(model)
-    resp = m.generate_content(prompt)
-    return resp.text.strip()
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    response = client.models.generate_content(
+        model=model,
+        contents=prompt
+    )
+    return response.text
 
 def call_model(prompt, model):
     if model.startswith("gpt-"):
