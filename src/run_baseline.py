@@ -6,6 +6,9 @@ from datasets import load_dataset
 from openai import OpenAI
 import google.generativeai as genai
 from config import TASKS, DIALECTS, MODELS, N, SEED, OUT_DIR
+from dotenv import load_dotenv
+load_dotenv() # Load environment variables from .env (API keys)
+
 
 ################################## Loading examples from datasets ##################################
 
