@@ -67,7 +67,7 @@ def load_gsm8k(dialect, n, seed):
         examples.append({
             "sae_question": e["Original"],
             "dialect_question": e["Dialect (Original)"],
-            "sae_answer": e["Answer"],
+            "label": e["Answer"],
             "bleu": e["BLEU Score Original"],
         })
         
@@ -164,7 +164,17 @@ def parse_boolq(text):
 # Parse GSM8K model output into numeric value (last number in output, or None if no numbers)
 def parse_gsm8k(text):
     nums = re.findall(r"-?\d+\.?\d*", text.replace(",", ""))
-    return nums[-1] if nums else None
+    # print("Original text:", text)
+    num = nums[-1] if nums else None
+    if num is not None:
+        try:
+            # Remove anything after a decimal point
+            if "." in num:
+                num = num.split(".")[0]
+                # print("Extracted numbers:", num)
+            return int(num)
+        except ValueError:
+            return None
 
 # Parse FOLIO model output into string value (True, False, Uncertain, or None if unclear)
 def parse_folio(text):
@@ -259,7 +269,12 @@ def score(task, pred, label, example):
     
     # For GSM8K, check if parsed prediction matches numeric label (extracted from text)
     if task == "gsm8k":
-        return pred == label
+        # print("Parsed prediction:", pred)
+        # print("Numeric label:", label)
+        # Parse label into numeric value: remove commas and convert to int
+        num_label = int(label.replace(",", ""))
+        # print("Comparison:", pred, "==", num_label)
+        return pred == num_label
     
     # For FOLIO, check if parsed prediction matches string label (True, False, or Uncertain)
     if task == "folio":
@@ -397,9 +412,9 @@ def main():
     summary = []
     
     # For debugging
-    d_tasks = ["mbpp"]
-    d_dialects = ["AAVE", "IndE"]
-    d_models = ["gpt-4o", "gpt-4o-mini"]
+    d_tasks = ["gsm8k"]
+    d_dialects = ["AAVE"]
+    d_models = ["gpt-4o"]
     
     for task in d_tasks:
         for dialect in d_dialects:
