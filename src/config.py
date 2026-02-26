@@ -5,10 +5,15 @@
 # Logic: FOLIO
 TASKS = ["boolq", "mbpp", "gsm8k", "folio"]
 
+BOOLQ_SIZES = {
+    "AAVE": 917,
+    "IndE": 400
+}
+
 # Dialects:
 # AAVE: African American Vernacular English
 # IndE: Indian English
-DIALECTS = ["AAVE", "IndE"]  
+DIALECTS = ["AAVE", "IndE", "JamE", "CollSgE", "ChcE"]  
    
 # Models:
 # Gemini 2.5 Pro: native reasoning model
@@ -18,10 +23,10 @@ MODELS = ["gemini-2.5-pro", "gpt-4o", "gpt-4o-mini"]
   
 # Number of examples, for each task-dialect-model combination
 #N = 200      
-N = 50 # for testing           
+N = 30 # for testing           
       
 # Random seed
-SEED = 1
+SEED = 2
 
 # Output and log directories for baseline results
 OUT_DIR = "results/baseline"

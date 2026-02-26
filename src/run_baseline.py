@@ -113,10 +113,9 @@ def build_prompt(task, ex, condition):
         passage = ex["sae_passage"] if condition == "SAE" else ex["dialect_passage"]
         question = ex["sae_question"]
         return (
-            "Answer the following question with only True or False.\n\n"
-            f"Passage: {passage}\n"
-            f"Question: {question}\n"
-            "Answer:"
+            f"Passage: \"{passage}\"\n"
+                f"Question: \"{question}\"\n"
+                "Is the answer TRUE or FALSE?\nAnswer:"
         )
     
     # For GSM8K, ask for numeric answer to math problem
@@ -400,7 +399,7 @@ def main():
     # For debugging
     d_tasks = ["mbpp"]
     d_dialects = ["AAVE", "IndE"]
-    d_models = ["gpt-4o-mini"]
+    d_models = ["gpt-4o", "gpt-4o-mini"]
     
     for task in d_tasks:
         for dialect in d_dialects:

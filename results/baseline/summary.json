@@ -2,17 +2,33 @@
   {
     "task": "mbpp",
     "dialect": "AAVE",
-    "model": "gpt-4o-mini",
-    "sae_accuracy": 0.7,
-    "dialect_accuracy": 0.7,
+    "model": "gpt-4o",
+    "sae_accuracy": 0.8666666666666667,
+    "dialect_accuracy": 0.8666666666666667,
     "gap": 0.0
+  },
+  {
+    "task": "mbpp",
+    "dialect": "AAVE",
+    "model": "gpt-4o-mini",
+    "sae_accuracy": 0.9,
+    "dialect_accuracy": 0.7,
+    "gap": 0.20000000000000007
+  },
+  {
+    "task": "mbpp",
+    "dialect": "IndE",
+    "model": "gpt-4o",
+    "sae_accuracy": 0.8,
+    "dialect_accuracy": 0.8333333333333334,
+    "gap": -0.033333333333333326
   },
   {
     "task": "mbpp",
     "dialect": "IndE",
     "model": "gpt-4o-mini",
-    "sae_accuracy": 0.68,
-    "dialect_accuracy": 0.74,
-    "gap": -0.05999999999999994
+    "sae_accuracy": 0.8,
+    "dialect_accuracy": 0.8,
+    "gap": 0.0
   }
 ]
