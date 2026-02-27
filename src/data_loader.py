@@ -1,6 +1,24 @@
 from datasets import load_dataset
 
 ################################## Loading examples from datasets ##################################
+# Load WSC examples for a given dialect, number of examples, and random seed
+def load_wsc(dialect, n, seed):
+    ds = load_dataset("abhaygupta1266/wsc")
+    split = ds[dialect].shuffle(seed=seed).select(range(n))
+    
+    examples = []
+    
+    for e in split:
+        examples.append({
+            "sae_paragraph": e["Original Paragraph"],
+            "span_1": e["Span 1"],
+            "span_2": e["Span 2"],
+            "dialect_paragraph": e["Dialect (Original Paragraph)"],
+            "label": e["Actual Label"],
+            "bleu": e["BLEU Score Original Paragraph"]
+        })
+        
+    return examples
 
 # Load BoolQ examples for a given dialect, number of examples, and random seed
 def load_boolq(dialect, n, seed):
@@ -75,6 +93,8 @@ def load_folio(dialect, n, seed):
 
 # Load examples for a given task, dialect, number of examples, and random seed
 def load_task(task, dialect, n, seed):
+    if task == "wsc":
+        return load_wsc(dialect, n, seed)
     if task == "boolq":
         return load_boolq(dialect, n, seed)
     if task == "gsm8k":

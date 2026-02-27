@@ -2,6 +2,17 @@ import re
 import io
 import contextlib
 ################################## Parsing model output ##################################
+# Parse WSC model output into integer
+def parse_wsc(text):
+    nums = re.findall(r"-?\d+\.?\d*", text.replace(",", ""))
+    t = nums[-1] if nums else None
+    # print("Parsed WSC output:", t)
+    if t is not None:
+        if t == "1":
+            return 1
+        if t == "0":
+            return 0
+    return None
 
 # Parse BoolQ model output into boolean value (True, False, or None if unclear)
 def parse_boolq(text):
@@ -81,6 +92,8 @@ def assess_mbpp(code, test_cases):
 
 # Parse model output for a given task into appropriate format for scoring
 def parse_task(task, text):
+    if task == "wsc":
+        return parse_wsc(text)
     if task == "boolq":
         return parse_boolq(text)
     if task == "gsm8k":
@@ -96,6 +109,13 @@ def parse_task(task, text):
 
 # Compute score for a given task by comparing model prediction to label, using appropriate parsing and assessment for each task
 def score(task, pred, label, example):
+    # For WSC, check if parsed prediction matches integer label (1 or 0)
+    if task == "wsc":
+        # print("Parsed prediction:", pred)
+        # print("Integer label:", label)
+        #print("Comparison:", pred, "==", label)
+        return pred == label
+    
     # For BoolQ, check if parsed prediction matches boolean label (True or False)
     if task == "boolq":
         return pred == label

@@ -2,6 +2,17 @@
 
 # Build prompt for a given task, example, and condition (SAE or dialect)
 def build_prompt(task, ex, condition):
+    # For WSC, ask whether pronoun refers to target noun
+    if task == "wsc":
+        paragraph = ex["sae_paragraph"] if condition == "SAE" else ex["dialect_paragraph"]
+        span1 = ex["span_1"]
+        span2 = ex["span_2"]
+        return (
+            f"Check if Span 2 refers to Span 1 in the paragraph.\n"
+                f"Paragraph: {paragraph}\nSpan 1: {span1}\nSpan 2: {span2}\n"
+                "Answer (1 if same, 0 if not):"
+        )
+        
     # For BoolQ, ask for T/F answer to question based on passage
     if task == "boolq":
         passage = ex["sae_passage"] if condition == "SAE" else ex["dialect_passage"]
