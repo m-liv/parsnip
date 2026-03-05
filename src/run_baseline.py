@@ -23,21 +23,20 @@ def ensure_dirs():
     os.makedirs(OUT_DIR, exist_ok=True)
     os.makedirs(LOG_DIR, exist_ok=True)
 
-# Generate path for JSONL output file for a given task, model, dialect, and condition (SAE or dialect)
-def jsonl_path(task, model, dialect, condition):
+# Generate path for JSON output file for a given task, model, dialect, and condition (SAE or dialect)
+def json_path(task, model, dialect, condition):
     safe_model = model.replace("/", "_")
-    return os.path.join(OUT_DIR, f"{task}__{safe_model}__{dialect}__{condition}.jsonl")
+    return os.path.join(OUT_DIR, f"{task}__{safe_model}__{dialect}__{condition}.json")
 
-# Generate path for JSONL log file for a given task, model, and dialect
+# Generate path for JSON log file for a given task, model, and dialect
 def log_path(task, model, dialect):
     safe_model = model.replace("/", "_")
-    return os.path.join(LOG_DIR, f"{task}__{safe_model}__{dialect}.jsonl")
+    return os.path.join(LOG_DIR, f"{task}__{safe_model}__{dialect}.json")
 
-# Append a row (dictionary) to a JSONL file at the given path (creating the file if it doesn't exist)
-def append_jsonl(path, row):
-    with open(path, "a", encoding="utf-8") as f:
-        f.write(json.dumps(row, ensure_ascii=False) + "\n")
-        
+# Write a list of rows (dictionaries) to a JSON file at the given path
+def write_json(path, rows):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(rows, f, indent=2, ensure_ascii=False)
 
 ################################## Running an experiment ##################################
 
@@ -50,11 +49,15 @@ def run_one(task, model, dialect):
     if os.path.exists(log_file):
         os.remove(log_file)
 
+    log_rows = []
+    
     for condition in ["SAE", dialect]:
-        out_path = jsonl_path(task, model, dialect, condition)
+        out_path = json_path(task, model, dialect, condition)
         if os.path.exists(out_path):
             os.remove(out_path)
 
+        results_rows = []
+        
         correct = 0
         total = 0
 
@@ -75,7 +78,7 @@ def run_one(task, model, dialect):
             label = ex.get("label")
             is_correct = score(task, pred, label, ex)
 
-            append_jsonl(out_path, {
+            results_rows.append({
                 "task": task,
                 "model": model,
                 "dialect": dialect,
@@ -86,7 +89,7 @@ def run_one(task, model, dialect):
                 "correct": is_correct,
             })
 
-            append_jsonl(log_file, {
+            log_rows.append({
                 "timestamp": datetime.datetime.utcnow().isoformat(),
                 "task": task,
                 "model": model,
@@ -103,9 +106,13 @@ def run_one(task, model, dialect):
 
             time.sleep(0.05)
 
+        write_json(out_path, results_rows)
+        
         acc = correct / total if total else 0.0
         results[condition] = {"accuracy": acc, "correct": correct, "total": total}
 
+    write_json(log_file, log_rows)
+    
     results["gap"] = results["SAE"]["accuracy"] - results[dialect]["accuracy"]
     return results
 
@@ -114,9 +121,9 @@ def main():
     summary = []
     
     # For debugging
-    d_tasks = ["gsm8k"]
+    d_tasks = ["wsc"]
     d_dialects = ["AAVE"]
-    d_models = ["gpt-4o"]
+    d_models = ["gpt-4o-mini"]
     
     for task in d_tasks:
         for dialect in d_dialects:
