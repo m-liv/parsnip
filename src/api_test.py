@@ -3,6 +3,7 @@ from google import genai
 import os
 from dotenv import load_dotenv
 load_dotenv() # Load environment variables from .env (API keys)
+from calls import call_openrouter
 
 # client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 # resp = client.chat.completions.create(
@@ -24,3 +25,4 @@ load_dotenv() # Load environment variables from .env (API keys)
 # model = genai.GenerativeModel("gemini-2.5-pro")
 # response = model.generate_content("Say hello")
 # print(response.text)
+print(call_openrouter("Say hello in one word.", "google/gemini-2.5-pro"))
