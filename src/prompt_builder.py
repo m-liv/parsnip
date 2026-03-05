@@ -13,6 +13,17 @@ def build_prompt(task, ex, condition):
                 "Answer (1 if same, 0 if not):"
         )
         
+    # For Logic Bench MCQ, ask for choice between 4 options based on context
+    if task == "logic_bench_mcq":
+        context = ex["sae_input"] if condition == "SAE" else ex["dialect_input"]
+        choices = [ex[f"choice_{i}"] for i in range(1, 5)]
+        return (
+            f"Select the correct choice from 1, 2, 3, or 4.\n"
+                f"Context: {context}\nChoice 1: {choices[0]}\nChoice 2: {choices[1]}\n"
+                f"Choice 3: {choices[2]}\nChoice 4: {choices[3]}\n"
+                "Answer (1, 2, 3, or 4):"
+        )
+        
     # For BoolQ, ask for T/F answer to question based on passage
     if task == "boolq":
         passage = ex["sae_passage"] if condition == "SAE" else ex["dialect_passage"]

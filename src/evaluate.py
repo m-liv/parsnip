@@ -14,6 +14,16 @@ def parse_wsc(text):
             return 0
     return None
 
+# Parse Logic Bench MCQ model output into integer choice (1, 2, 3, or 4)
+def parse_logic_bench_mcq(text):
+    nums = re.findall(r"-?\d+\.?\d*", text.replace(",", ""))
+    t = nums[-1] if nums else None
+    #print("Parsed Logic Bench MCQ output:", t)
+    if t is not None:
+        if t in ["1", "2", "3", "4"]:
+            return int(t)
+    return None
+
 # Parse BoolQ model output into boolean value (True, False, or None if unclear)
 def parse_boolq(text):
     t = text.strip().lower()
@@ -94,6 +104,8 @@ def assess_mbpp(code, test_cases):
 def parse_task(task, text):
     if task == "wsc":
         return parse_wsc(text)
+    if task == "logic_bench_mcq":
+        return parse_logic_bench_mcq(text)
     if task == "boolq":
         return parse_boolq(text)
     if task == "gsm8k":
@@ -115,6 +127,13 @@ def score(task, pred, label, example):
         # print("Integer label:", label)
         #print("Comparison:", pred, "==", label)
         return pred == label
+    
+    # For Logic Bench MCQ, check if parsed prediction matches integer label (1, 2, 3, or 4)
+    if task == "logic_bench_mcq":
+        # print("Parsed prediction:", pred)
+        # print("Integer label:", label)
+        # print("Comparison:", pred, "==", label)
+        return pred == int(label)
     
     # For BoolQ, check if parsed prediction matches boolean label (True or False)
     if task == "boolq":

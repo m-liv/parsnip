@@ -1,7 +1,9 @@
 import time
 import os
+from dotenv import load_dotenv
 from openai import OpenAI
 from google import genai
+load_dotenv()
 
 openrouter_client = OpenAI(
     api_key=os.environ["OPENROUTER_API_KEY"],

@@ -91,10 +91,33 @@ def load_folio(dialect, n, seed):
         
     return examples
 
+# Load Logic Bench MCQ examples for a given dialect, number of examples, and random seed
+def load_logic_bench_mcq(dialect, n, seed):
+    ds = load_dataset("abhaygupta1266/logic_bench_mcq")
+    split = ds[dialect].shuffle(seed=seed).select(range(n))
+    
+    examples = []
+    
+    for e in split:
+        examples.append({
+            "sae_input": e["Context"],
+            "dialect_input": e["Dialect (context)"],
+            "choice_1": e["Choice 1"],
+            "choice_2": e["Choice 2"],
+            "choice_3": e["Choice 3"],
+            "choice_4": e["Choice 4"],
+            "label": e["Answer"].replace("choice_", ""),
+            "bleu": e["BLEU Score Context"],
+        })
+        
+    return examples
+
 # Load examples for a given task, dialect, number of examples, and random seed
 def load_task(task, dialect, n, seed):
     if task == "wsc":
         return load_wsc(dialect, n, seed)
+    if task == "logic_bench_mcq":
+        return load_logic_bench_mcq(dialect, n, seed)
     if task == "boolq":
         return load_boolq(dialect, n, seed)
     if task == "gsm8k":
