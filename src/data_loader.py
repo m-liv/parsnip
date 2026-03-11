@@ -112,12 +112,33 @@ def load_logic_bench_mcq(dialect, n, seed):
         
     return examples
 
+# Load MultiRC examples for a given dialect, number of examples, and random seed
+def load_multirc(dialect, n, seed):
+    ds = load_dataset("abhaygupta1266/multirc")
+    split = ds[dialect].shuffle(seed=seed).select(range(n))
+    
+    examples = []
+    
+    for e in split:
+        examples.append({
+            "sae_input": e["Paragraph"],
+            "dialect_input": e["Dialect (Paragraph)"],
+            "question": e["Question"],
+            "answer_choice": e["Answer Choice"],
+            "label": e["Actual Label"],
+            "bleu": e["BLEU Score Paragraph"],
+        })
+        
+    return examples
+
 # Load examples for a given task, dialect, number of examples, and random seed
 def load_task(task, dialect, n, seed):
     if task == "wsc":
         return load_wsc(dialect, n, seed)
     if task == "logic_bench_mcq":
         return load_logic_bench_mcq(dialect, n, seed)
+    if task == "multirc":
+        return load_multirc(dialect, n, seed)
     if task == "boolq":
         return load_boolq(dialect, n, seed)
     if task == "gsm8k":

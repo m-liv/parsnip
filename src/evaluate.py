@@ -14,6 +14,19 @@ def parse_wsc(text):
             return 0
     return None
 
+
+# Parse MultiRC model output into integer choice (1 or 0)
+def parse_multirc(text):
+    nums = re.findall(r"-?\d+\.?\d*", text.replace(",", ""))
+    t = nums[-1] if nums else None
+    # print("Parsed MultiRC output:", t)
+    if t is not None:
+        if t == "1":
+            return 1
+        if t == "0":
+            return 0
+    return None
+
 # Parse Logic Bench MCQ model output into integer choice (1, 2, 3, or 4)
 def parse_logic_bench_mcq(text):
     nums = re.findall(r"-?\d+\.?\d*", text.replace(",", ""))
@@ -104,6 +117,8 @@ def assess_mbpp(code, test_cases):
 def parse_task(task, text):
     if task == "wsc":
         return parse_wsc(text)
+    if task == "multirc":
+        return parse_multirc(text)
     if task == "logic_bench_mcq":
         return parse_logic_bench_mcq(text)
     if task == "boolq":
@@ -127,6 +142,13 @@ def score(task, pred, label, example):
         # print("Integer label:", label)
         #print("Comparison:", pred, "==", label)
         return pred == label
+    
+    # For MultiRC, check if parsed prediction matches integer label (1 or 0)
+    if task == "multirc":
+        # print("Parsed prediction:", pred)
+        # print("Integer label:", label)
+        # print("Comparison:", pred, "==", label)
+        return pred == int(label)
     
     # For Logic Bench MCQ, check if parsed prediction matches integer label (1, 2, 3, or 4)
     if task == "logic_bench_mcq":

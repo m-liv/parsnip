@@ -23,7 +23,18 @@ def build_prompt(task, ex, condition):
                 f"Choice 3: {choices[2]}\nChoice 4: {choices[3]}\n"
                 "Answer (1, 2, 3, or 4):"
         )
-        
+    
+    # For MultiRC, ask for 1/0 answer to question based on passage
+    if task == "multirc":
+        paragraph = ex["sae_input"] if condition == "SAE" else ex["dialect_input"]
+        question = ex["question"]
+        answer_choice = ex["answer_choice"]
+        return (
+            f"Given a paragraph, a question, and an answer choice, is the choice correct (1) or incorrect (0)?\n"
+                f"Paragraph: {paragraph}\nQuestion: {question}\nAnswer Choice: {answer_choice}\n"
+                "Answer:"
+        )
+    
     # For BoolQ, ask for T/F answer to question based on passage
     if task == "boolq":
         passage = ex["sae_passage"] if condition == "SAE" else ex["dialect_passage"]
