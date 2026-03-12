@@ -1,1 +1,9 @@
 .venv/
+.venv11/
+.env
+
+logs/
+data/
+results/
+
+__pycache__/
