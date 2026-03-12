@@ -5,12 +5,10 @@ import datetime
 from tqdm import tqdm
 from itertools import product
 from config import TASKS, DIALECTS, MODELS, N, SEED, OUT_DIR, LOG_DIR
-from dotenv import load_dotenv
 from calls import call_model
 from prompt_builder import build_prompt
 from data_loader import load_task
 from evaluate import parse_task, score
-load_dotenv() # Load environment variables from .env (API keys)
 from huggingface_hub import login
 
 if os.environ.get("HF_TOKEN"):
@@ -121,9 +119,9 @@ def main():
     summary = []
     
     # For debugging
-    d_tasks = ["wsc"]
+    d_tasks = ["multirc"]
     d_dialects = ["AAVE"]
-    d_models = ["gpt-4o-mini"]
+    d_models = ["gpt-4o"]
     
     for task in d_tasks:
         for dialect in d_dialects:
