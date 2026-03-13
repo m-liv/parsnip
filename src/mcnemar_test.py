@@ -41,7 +41,7 @@ def run_mcnemar(sae_path, dialect_path):
 
 # === Run for all your completed experiments ===
 
-base_dir = "results/baseline"  # change to "results/dialect_aware" if you want to analyze those results instead
+base_dir = "results/dialect_aware" 
 
 experiments = [
     # (task, model, dialect)
