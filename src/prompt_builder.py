@@ -1,6 +1,6 @@
 ################################## Building prompts ##################################
 
-# Build prompt for a given task, example, and condition (SAE or dialect)
+# Build baseline prompt (no intervation strategy) for a given task, example, and condition (SAE or dialect)
 def build_prompt(task, ex, condition):
     # For WSC, ask whether pronoun refers to target noun
     if task == "wsc":
@@ -70,6 +70,61 @@ def build_prompt(task, ex, condition):
         conclusion = ex["conclusion"]
         return (
             "Determine whether the following conclusion is true, false, or uncertain based on the premises. Answer with only True, False, or Uncertain.\n\n"
+            f"Premises: {premises}\n"
+            f"Conclusion: {conclusion}\n"
+            "Answer:"
+        )
+        
+    return ""
+
+# Build prompt with dialect-aware instructions for a given task, example, and condition (SAE or dialect)
+def build_dialect_aware_prompt(task, ex, condition, dialect):
+    if condition == "SAE":
+        dialect_name = "Standard American English (SAE)"
+    elif dialect == "AAVE":
+        dialect_name = "African American Vernacular English (AAVE)"
+    elif dialect == "IndE":
+        dialect_name = "Indian English (IndE)"
+    # For WSC, ask whether pronoun refers to target noun
+    if task == "wsc":
+        paragraph = ex["sae_paragraph"] if condition == "SAE" else ex["dialect_paragraph"]
+        span1 = ex["span_1"]
+        span2 = ex["span_2"]
+        return (
+            f"You are given a paragraph written in {dialect_name}.\nCheck if Span 2 refers to Span 1 in the paragraph.\n"
+                f"Paragraph: {paragraph}\nSpan 1: {span1}\nSpan 2: {span2}\n"
+                "Answer (1 if same, 0 if not):"
+        )
+        
+    # For Logic Bench MCQ, ask for choice between 4 options based on context
+    if task == "logic_bench_mcq":
+        context = ex["sae_input"] if condition == "SAE" else ex["dialect_input"]
+        choices = [ex[f"choice_{i}"] for i in range(1, 5)]
+        return (
+            f"You are given a question written in {dialect_name}. Select the correct choice from 1, 2, 3, or 4.\n"
+                f"Context: {context}\nChoice 1: {choices[0]}\nChoice 2: {choices[1]}\n"
+                f"Choice 3: {choices[2]}\nChoice 4: {choices[3]}\n"
+                "Answer (1, 2, 3, or 4):"
+        )
+    
+    # For MultiRC, ask for 1/0 answer to question based on passage
+    if task == "multirc":
+        paragraph = ex["sae_input"] if condition == "SAE" else ex["dialect_input"]
+        question = ex["question"]
+        answer_choice = ex["answer_choice"]
+        return (
+            f"You are given a paragraph written in {dialect_name}.\nGiven a paragraph, a question, and an answer choice, is the choice correct (1) or incorrect (0)?\n"
+                f"Paragraph: {paragraph}\nQuestion: {question}\nAnswer Choice: {answer_choice}\n"
+                "Answer:"
+        )
+    
+    
+    # For FOLIO, ask for T/F answer to conclusion based on premises
+    if task == "folio":
+        premises = ex["sae_input"] if condition == "SAE" else ex["dialect_input"]
+        conclusion = ex["conclusion"]
+        return (
+            f"You are given premises written in {dialect_name}.\nDetermine whether the following conclusion is true, false, or uncertain based on the premises. Answer with only True, False, or Uncertain.\n\n"
             f"Premises: {premises}\n"
             f"Conclusion: {conclusion}\n"
             "Answer:"
