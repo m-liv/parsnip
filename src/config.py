@@ -1,19 +1,12 @@
 # Tasks:
-# Language Understanding: BoolQ
-# Algorithmic Understanding: MBPP
-# Math: GSM8K
-# Logic: FOLIO
-TASKS = ["boolq", "mbpp", "gsm8k", "folio"]
-
-BOOLQ_SIZES = {
-    "AAVE": 917,
-    "IndE": 400
-}
+# Language Understanding: WSC, MultiRC
+# Logic: Logic Bench MCQ, FOLIO
+TASKS = ["wsc", "multirc", "logic_bench_mcq", "folio"]
 
 # Dialects:
 # AAVE: African American Vernacular English
 # IndE: Indian English
-DIALECTS = ["AAVE", "IndE", "JamE", "CollSgE", "ChcE"]  
+DIALECTS = ["AAVE", "IndE"]  
    
 # Models:
 # Gemini 2.5 Pro: native reasoning model
@@ -23,11 +16,15 @@ MODELS = ["gemini-2.5-pro", "gpt-4o", "gpt-4o-mini"]
   
 # Number of examples, for each task-dialect-model combination
 #N = 200      
-N = 30 # for testing           
+N = 580 # for testing           
       
 # Random seed
-SEED = 2
+SEED = 20
 
 # Output and log directories for baseline results
-OUT_DIR = "results/baseline"
-LOG_DIR = "logs/baseline"
+# OUT_DIR = "results/baseline"
+# LOG_DIR = "logs/baseline"
+
+# Output and log directories for dialect aware instruction results
+OUT_DIR = "results/dialect_aware"
+LOG_DIR = "logs/dialect_aware"

@@ -80,11 +80,11 @@ def build_prompt(task, ex, condition):
 # Build prompt with dialect-aware instructions for a given task, example, and condition (SAE or dialect)
 def build_dialect_aware_prompt(task, ex, condition, dialect):
     if condition == "SAE":
-        dialect_name = "Standard American English (SAE)"
+        dialect_name = "English"
     elif dialect == "AAVE":
-        dialect_name = "African American Vernacular English (AAVE)"
+        dialect_name = "the African American Vernacular English (AAVE) dialect"
     elif dialect == "IndE":
-        dialect_name = "Indian English (IndE)"
+        dialect_name = "the Indian English dialect"
     # For WSC, ask whether pronoun refers to target noun
     if task == "wsc":
         paragraph = ex["sae_paragraph"] if condition == "SAE" else ex["dialect_paragraph"]
