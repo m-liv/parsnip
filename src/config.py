@@ -16,6 +16,12 @@ MODELS = ["gemini-2.5-pro", "gpt-4o", "gpt-4o-mini"]
   
 # Number of examples, for each task-dialect-model combination
 #N = 200      
+ 
+# WSC: AAVE = 580, IndE = 511
+# MultiRC: AAVE = 986, IndE = 376
+# Logic Bench MCQ: AAVE = 480, IndE = 239
+# FOLIO: AAVE = 925, IndE = 298
+
 N = 580 # for testing           
       
 # Random seed
