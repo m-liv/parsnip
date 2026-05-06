@@ -14,23 +14,14 @@ DIALECTS = ["AAVE", "IndE"]
 # GPT-4o mini: small model
 MODELS = ["gemini-2.5-pro", "gpt-4o", "gpt-4o-mini"]     
   
-# Number of examples, for each task-dialect-model combination
-#N = 200      
+# Specify sample size for current iteration
+N = 200      
  
+# Total available task sizes:
 # WSC: AAVE = 580, IndE = 511
 # MultiRC: AAVE = 986, IndE = 376
 # Logic Bench MCQ: AAVE = 480, IndE = 239
-# FOLIO: AAVE = 925, IndE = 298
-
-N = 100 # for testing           
+# FOLIO: AAVE = 925, IndE = 298        
       
 # Random seed
 SEED = 20
-
-# Output and log directories for baseline results
-# OUT_DIR = "results/baseline"
-# LOG_DIR = "logs/baseline"
-
-# Output and log directories for dialect aware instruction results
-OUT_DIR = "results/dialect_aware"
-LOG_DIR = "logs/dialect_aware"

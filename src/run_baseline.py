@@ -4,7 +4,7 @@ import time
 import datetime
 from tqdm import tqdm
 from itertools import product
-from config import TASKS, DIALECTS, MODELS, N, SEED, OUT_DIR, LOG_DIR
+from config import TASKS, DIALECTS, MODELS, N, SEED
 from calls import call_model
 from prompt_builder import build_prompt
 from data_loader import load_task
@@ -13,6 +13,9 @@ from huggingface_hub import login
 
 if os.environ.get("HF_TOKEN"):
     login(token=os.environ["HF_TOKEN"])
+    
+OUT_DIR = "results/baseline"
+LOG_DIR = "logs/baseline"
 
 ################################## Output and logging directories ##################################
 

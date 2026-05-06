@@ -4,9 +4,6 @@ import time
 import datetime
 from tqdm import tqdm
 from config import TASKS, DIALECTS, MODELS, N, SEED
-
-OUT_DIR = "results/paraphrase"
-LOG_DIR = "logs/paraphrase"
 from calls import call_model
 from prompt_builder import get_dialect_text, build_paraphrase_prompt, build_prompt_from_paraphrase
 from data_loader import load_task
@@ -15,6 +12,9 @@ from huggingface_hub import login
 
 if os.environ.get("HF_TOKEN"):
     login(token=os.environ["HF_TOKEN"])
+    
+OUT_DIR = "results/paraphrase"
+LOG_DIR = "logs/paraphrase"
 
 ################################## Output and logging directories ##################################
 
