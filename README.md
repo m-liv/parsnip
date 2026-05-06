@@ -45,24 +45,26 @@ OPENROUTER_API_KEY=
 
 Each pipeline script accepts `--task`, `--dialect`, and `--model` arguments. Valid values are defined in [src/config.py](src/config.py).
 
+To run from the `src` directory:
+
 **Baseline**
 ```bash
-python3 -m src.run_baseline --task wsc --dialect AAVE --model gpt-4o
+python3 -m run_baseline.py --task wsc --dialect AAVE --model gpt-4o
 ```
 
 **Dialect-aware**
 ```bash
-python3 -m src.run_dialect_aware --task wsc --dialect AAVE --model gpt-4o
+python3 -m run_dialect_aware.py --task wsc --dialect AAVE --model gpt-4o
 ```
 
 **Paraphrase**
 ```bash
-python3 -m src.run_paraphrase --task wsc --dialect AAVE --model gpt-4o
+python3 -m run_paraphrase.py --task wsc --dialect AAVE --model gpt-4o
 ```
 
 **Few-shot**
 ```bash
-python3 -m src.run_few_shot --task wsc --dialect AAVE --model gpt-4o
+python3 -m run_few_shot.py --task wsc --dialect AAVE --model gpt-4o
 ```
 
 Valid tasks: `wsc`, `multirc`, `logic_bench_mcq`, `folio`  
