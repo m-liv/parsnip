@@ -24,12 +24,11 @@ def ensure_dirs():
 
 def json_path(task, model, dialect, condition):
     safe_model = model.replace("/", "_")
-    return os.path.join(OUT_DIR, f"PAR__{task}__{safe_model}__{dialect}__{condition}.json")
+    return os.path.join(OUT_DIR, f"N_{N}__PAR__{task}__{safe_model}__{dialect}__{condition}.json")
 
 def log_path(task, model, dialect):
     safe_model = model.replace("/", "_")
-    return os.path.join(LOG_DIR, f"PAR__{task}__{safe_model}__{dialect}.json")
-
+    return os.path.join(LOG_DIR, f"N_{N}__PAR__{task}__{safe_model}__{dialect}.json")
 def write_json(path, rows):
     with open(path, "w", encoding="utf-8") as f:
         json.dump(rows, f, indent=2, ensure_ascii=False)
@@ -63,6 +62,7 @@ def run_one(task, model, dialect):
             )
         ):
             dialect_text = get_dialect_text(task, ex)
+            dialect_prompt = build_prompt_from_paraphrase(task, ex, dialect_text)
             paraphrase_prompt = build_paraphrase_prompt(dialect_text, dialect)
 
             para_start = time.time()
@@ -99,6 +99,7 @@ def run_one(task, model, dialect):
                 "condition": condition,
                 "example_index": i,
                 "latency_seconds": latency,
+                "dialect_prompt": dialect_prompt,
                 "prompt": prompt,
                 "response": raw,
             }
@@ -123,27 +124,26 @@ def run_one(task, model, dialect):
     return results
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--task", required=True, choices=TASKS)
+    parser.add_argument("--dialect", required=True, choices=DIALECTS)
+    parser.add_argument("--model", required=True, choices=MODELS)
+    args = parser.parse_args()
+
     ensure_dirs()
     summary = []
 
-    # For debugging
-    d_tasks = ["wsc"]
-    d_dialects = ["IndE"]
-    d_models = ["gpt-4o"]
+    res = run_one(args.task, args.model, args.dialect)
+    summary.append({
+        "task": args.task,
+        "dialect": args.dialect,
+        "model": args.model,
+        "dialect_accuracy": res[args.dialect]["accuracy"],
+    })
+    print(args.task, args.dialect, args.model, "DIALECT", res[args.dialect]["accuracy"])
 
-    for task in d_tasks:
-        for dialect in d_dialects:
-            for model in d_models:
-                res = run_one(task, model, dialect)
-                summary.append({
-                    "task": task,
-                    "dialect": dialect,
-                    "model": model,
-                    "dialect_accuracy": res[dialect]["accuracy"],
-                })
-                print(task, dialect, model, "DIALECT", res[dialect]["accuracy"])
-
-    with open(os.path.join(OUT_DIR, "summary_paraphrase.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(OUT_DIR, f"N_{N}__summary_paraphrase.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
 if __name__ == "__main__":

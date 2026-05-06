@@ -115,27 +115,26 @@ def run_one(task, model, dialect):
     return results
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--task", required=True, choices=TASKS)
+    parser.add_argument("--dialect", required=True, choices=DIALECTS)
+    parser.add_argument("--model", required=True, choices=MODELS)
+    args = parser.parse_args()
+
     ensure_dirs()
     summary = []
-    
-    # For debugging
-    d_tasks = ["multirc"]
-    d_dialects = ["AAVE"]
-    d_models = ["gpt-4o"]
-    
-    for task in d_tasks:
-        for dialect in d_dialects:
-            for model in d_models:
-                res = run_one(task, model, dialect)
-                summary.append({
-                    "task": task,
-                    "dialect": dialect,
-                    "model": model,
-                    "sae_accuracy": res["SAE"]["accuracy"],
-                    "dialect_accuracy": res[dialect]["accuracy"],
-                    "gap": res["gap"],
-                })
-                print(task, dialect, model, "SAE", res["SAE"]["accuracy"], "DIALECT", res[dialect]["accuracy"], "GAP", res["gap"])
+
+    res = run_one(args.task, args.model, args.dialect)
+    summary.append({
+        "task": args.task,
+        "dialect": args.dialect,
+        "model": args.model,
+        "sae_accuracy": res["SAE"]["accuracy"],
+        "dialect_accuracy": res[args.dialect]["accuracy"],
+        "gap": res["gap"],
+    })
+    print(args.task, args.dialect, args.model, "SAE", res["SAE"]["accuracy"], "DIALECT", res[args.dialect]["accuracy"], "GAP", res["gap"])
 
     with open(os.path.join(OUT_DIR, "summary.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)

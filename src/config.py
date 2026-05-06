@@ -22,7 +22,7 @@ MODELS = ["gemini-2.5-pro", "gpt-4o", "gpt-4o-mini"]
 # Logic Bench MCQ: AAVE = 480, IndE = 239
 # FOLIO: AAVE = 925, IndE = 298
 
-N = 580 # for testing           
+N = 100 # for testing           
       
 # Random seed
 SEED = 20

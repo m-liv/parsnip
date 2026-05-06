@@ -24,12 +24,12 @@ def ensure_dirs():
 # Generate path for JSON output file for a given task, model, dialect, and condition (SAE or dialect)
 def json_path(task, model, dialect, condition):
     safe_model = model.replace("/", "_")
-    return os.path.join(OUT_DIR, f"DA__{task}__{safe_model}__{dialect}__{condition}.json")
+    return os.path.join(OUT_DIR, f"N_{N}__DA__{task}__{safe_model}__{dialect}__{condition}.json")
 
 # Generate path for JSON log file for a given task, model, and dialect
 def log_path(task, model, dialect):
     safe_model = model.replace("/", "_")
-    return os.path.join(LOG_DIR, f"DA__{task}__{safe_model}__{dialect}.json")
+    return os.path.join(LOG_DIR, f"N_{N}__DA__{task}__{safe_model}__{dialect}.json")
 
 # Write a list of rows (dictionaries) to a JSON file at the given path
 def write_json(path, rows):
@@ -114,27 +114,26 @@ def run_one(task, model, dialect):
     return results
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--task", required=True, choices=TASKS)
+    parser.add_argument("--dialect", required=True, choices=DIALECTS)
+    parser.add_argument("--model", required=True, choices=MODELS)
+    args = parser.parse_args()
+
     ensure_dirs()
     summary = []
 
-    # For debugging
-    d_tasks = ["wsc"]
-    d_dialects = ["AAVE"]
-    d_models = ["gpt-4o"]
+    res = run_one(args.task, args.model, args.dialect)
+    summary.append({
+        "task": args.task,
+        "dialect": args.dialect,
+        "model": args.model,
+        "dialect_accuracy": res[args.dialect]["accuracy"],
+    })
+    print(args.task, args.dialect, args.model, "DIALECT", res[args.dialect]["accuracy"])
 
-    for task in d_tasks:
-        for dialect in d_dialects:
-            for model in d_models:
-                res = run_one(task, model, dialect)
-                summary.append({
-                    "task": task,
-                    "dialect": dialect,
-                    "model": model,
-                    "dialect_accuracy": res[dialect]["accuracy"],
-                })
-                print(task, dialect, model, "DIALECT", res[dialect]["accuracy"])
-
-    with open(os.path.join(OUT_DIR, "summary.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(OUT_DIR, f"N_{N}__summary_dialect_aware.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
 if __name__ == "__main__":
