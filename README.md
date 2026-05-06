@@ -1,6 +1,6 @@
 # parsnip
 
-We investigate whether inference-time prompting strategies can mitigate dialect-related performance gaps in LLM reasoning tasks, using the [EnDiVE](https://huggingface.co/datasets/EnDiVE/EnDiVE) benchmark.
+We investigate whether inference-time prompting strategies can mitigate dialect-related performance gaps in LLM reasoning tasks, using the [EnDiVE](https://endiveee.github.io/) benchmark.
 
 ## Research Overview
 
